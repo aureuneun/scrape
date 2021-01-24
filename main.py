@@ -4,6 +4,8 @@ from flask import Flask, render_template, request, redirect
 
 app = Flask("scrape")
 
+db = {}
+
 
 @app.route("/")
 def home():
@@ -15,8 +17,13 @@ def search():
     term = request.args.get("term")
     if term:
         term = term.lower()
-        jobkorea_jobs = get_jobs(term)
-        save_jobs(jobkorea_jobs)
+        fakeDB = db.get(term)
+        if fakeDB:
+            jobs = fakeDB
+        else:
+            jobs = get_jobs(term)
+            db[term] = jobs
+            save_jobs(jobs)
     else:
         return redirect("/")
     return render_template("search.html", term=term)
