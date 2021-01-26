@@ -14,8 +14,8 @@ def home():
 
 @app.route("/search")
 def search():
-    term = request.args.get("term")
-    if term:
+    try:
+        term = request.args.get("term")
         term = term.lower()
         fakeDB = db.get(term)
         if fakeDB:
@@ -24,9 +24,9 @@ def search():
             jobs = get_jobs(term)
             db[term] = jobs
             save_jobs(jobs)
-    else:
+    except Exception:
         return redirect("/")
-    return render_template("search.html", term=term)
+    return render_template("search.html", term=term, length=len(jobs), jobs=jobs)
 
 
 app.run()
